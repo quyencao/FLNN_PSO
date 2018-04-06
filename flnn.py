@@ -58,7 +58,7 @@ y_valid = y_valid.T
 
 if __name__ == '__main__':
     p = pso.PSO(X_train_tr, y_train, X_valid, y_valid)
-    best_global_solutions = p.train(200)
+    best_global_solutions = p.train(100)
 
     maes = []
 

@@ -77,6 +77,7 @@ class PSO:
     def __init__(self, X, y, X_valid, y_valid, n_particles=100):
         self.n_inputs = X.shape[0]
         self.n_outputs = y.shape[0]
+        self.length = self.n_inputs * self.n_outputs + self.n_outputs
         self.X = X
         self.y = y
         self.X_valid = X_valid
@@ -84,17 +85,17 @@ class PSO:
         self.n_particles = n_particles
         self.c1 = 2
         self.c2 = 2
-        self.v_max = 2
-        self.v_min = -2
+        self.v_max = 1
+        self.v_min = -1
         self.w_max = 0.9
         self.w_min = 0.4
 
     def initialize_particles(self):
-        length = self.n_inputs * self.n_outputs + self.n_outputs
+
         particles = []
 
         for i in range(self.n_particles):
-            p = Particle(length)
+            p = Particle(self.length)
             particles.append(p)
 
         return particles
@@ -107,7 +108,7 @@ class PSO:
 
         for e in range(epochs):
 
-            # w = (self.w_max - self.w_min) * (epochs - e) / epochs + self.w_min
+            w = (self.w_max - self.w_min) * (epochs - e) / epochs + self.w_min
 
             total_MAE = 0
 
@@ -142,7 +143,7 @@ class PSO:
                 p_t = p.get_pBest()
                 x_t = p.get_data()
 
-                v_t = v_t + self.c1 * random.random() * (p_t - x_t) + self.c2 * random.random() * (gbest - x_t)
+                v_t = w * v_t + self.c1 * np.random.uniform(low=0, high=1, size=(self.length)) * (p_t - x_t) + self.c2 * np.random.uniform(low=0, high=1, size=(self.length)) * (gbest - x_t)
 
                 v_t[v_t > self.v_max] = self.v_max
                 v_t[v_t < self.v_min] = self.v_min
